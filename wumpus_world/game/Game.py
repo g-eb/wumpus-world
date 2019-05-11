@@ -3,8 +3,5 @@ from wumpus_world.game.FieldType import FieldType
 
 newMap = Map(10,10)
 newMap.randomMap()
+newMap.printStatus()
 
-for row in range(newMap.height):
-    for col in range(newMap.width):
-        print(newMap.fields[row][col].getGraphic(), end = "")
-    print()

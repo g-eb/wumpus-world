@@ -54,6 +54,12 @@ class Map:
         # rand gold
         self.__addTypeToRandomFields(Gold(), 1)
 
+    def printStatus(self):
+        for row in range(self.height):
+            for col in range(self.width):
+                print(self.fields[row][col].getGraphic(), end="")
+            print()
+
     def __addTypeToRandomFields(self, typeName, num):
         for el in range(num):
             wasSet = False
