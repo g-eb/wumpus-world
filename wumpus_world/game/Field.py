@@ -23,3 +23,24 @@ class Field:
             graphic += el.getConsoleGraphic()
         graphic += "|"
         return graphic
+
+    def removeType(self, typeClass):
+        obj = self.getType(typeClass)
+        if obj is not None:
+            self.contains.remove(obj)
+        return obj
+
+    def getType(self, typeClass):
+        obj = None
+        for el in self.contains:
+            if typeClass == el.__class__:
+                obj = el
+                break
+        return obj
+
+    def hasDangerousElement(self):
+        for el in self.contains:
+            if el.isDangerous:
+                return True
+        return False
+

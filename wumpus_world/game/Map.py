@@ -1,10 +1,10 @@
 from random import randint
-
 from wumpus_world.game.Field import Field
 from wumpus_world.game.Player import Player
 from wumpus_world.game.Dragon import Dragon
 from wumpus_world.game.Hole import Hole
 from wumpus_world.game.Gold import Gold
+from wumpus_world.game.Direction import Direction
 
 
 class Map:
@@ -12,6 +12,8 @@ class Map:
     holesOccurrenceFrequency = 0.1      # (1,0)
 
     def __init__(self, width, height):
+        self.playerPosX = 0
+        self.playerPosY = 0
         self.width = width
         self.height = height
         self.gameOver = False
@@ -59,6 +61,36 @@ class Map:
             for col in range(self.width):
                 print(self.fields[row][col].getGraphic(), end="")
             print()
+
+    def __action(self):
+        self.printStatus()
+        direction = input()
+        if direction == Direction.DOWN.value:
+            self.__tryMove(self.playerPosX, self.playerPosY+1)
+        elif direction == Direction.UP.value:
+            self.__tryMove(self.playerPosX, self.playerPosY-1)
+        elif direction == Direction.LEFT.value:
+            self.__tryMove(self.playerPosX-1, self.playerPosY)
+        elif direction == Direction.RIGHT.value:
+            self.__tryMove(self.playerPosX+1, self.playerPosY)
+
+    def __tryMove(self, x, y):
+        if not(self.__isXYLegal(x, y)):
+            return
+        # make move
+        player = self.fields[self.playerPosY][self.playerPosX].removeType(Player().__class__)
+        if self.fields[y][x].hasDangerousElement():     #collison
+            print("Game Over")
+            self.gameOver = True
+            return
+        # add player to new field
+        self.fields[y][x].addType(player)
+        self.playerPosX = x
+        self.playerPosY = y
+
+    def startGame(self):
+        while not(self.gameOver):
+            self.__action()
 
     def __addTypeToRandomFields(self, typeName, num):
         for el in range(num):
