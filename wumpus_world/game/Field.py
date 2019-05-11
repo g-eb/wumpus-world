@@ -1,4 +1,6 @@
 from wumpus_world.game.FieldType import FieldType
+from wumpus_world.game.Gold import Gold
+from wumpus_world.game.Player import Player
 
 class Field:
     MAX_ELEMENTS_NUM = 3
@@ -43,4 +45,20 @@ class Field:
             if el.isDangerous:
                 return True
         return False
+
+    def tryPickUpGold(self):
+        gold = None
+        for el in self.contains:
+            if el.__class__ == Gold().__class__:
+                for el2 in self.contains:
+                    if el2.__class__ == Player().__class__:
+                        gold = el
+                        break
+                if gold is not None:
+                    break
+        if gold is not None:
+            self.contains.remove(gold)
+            return True
+        return False
+
 

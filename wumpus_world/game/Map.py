@@ -80,6 +80,7 @@ class Map:
         # make move
         player = self.fields[self.playerPosY][self.playerPosX].removeType(Player().__class__)
         if self.fields[y][x].hasDangerousElement():     #collison
+            self.printStatus()
             print("Game Over")
             self.gameOver = True
             return
@@ -87,6 +88,15 @@ class Map:
         self.fields[y][x].addType(player)
         self.playerPosX = x
         self.playerPosY = y
+        # check if the gold is there
+        if self.fields[y][x].tryPickUpGold():
+            player.hasGold = True
+        # check game end condition
+        if y == 0 and x == 0 and player.hasGold == True:
+            self.printStatus()
+            print("You've won!")
+            print("Game Over")
+            self.gameOver = True
 
     def startGame(self):
         while not(self.gameOver):
