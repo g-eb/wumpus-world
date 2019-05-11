@@ -35,6 +35,16 @@ class Map:
         if self.__isXYLegal(x, y+1):
             self.fields[y+1][x].addType(effectType)
 
+    def __removeAroundEffect(self, x, y, effectTypeClass):
+        if self.__isXYLegal(x-1, y):
+            self.fields[y][x-1].removeType(effectTypeClass)
+        if self.__isXYLegal(x+1, y):
+            self.fields[y][x+1].removeType(effectTypeClass)
+        if self.__isXYLegal(x, y-1):
+            self.fields[y-1][x].removeType(effectTypeClass)
+        if self.__isXYLegal(x, y+1):
+            self.fields[y+1][x].removeType(effectTypeClass)
+
     def addNewTypeToField(self, x, y, type):
         if not(self.__isXYLegal(x, y)):
             print("illegal field was given")
@@ -89,8 +99,11 @@ class Map:
         self.playerPosX = x
         self.playerPosY = y
         # check if the gold is there
-        if self.fields[y][x].tryPickUpGold():
+        gold = self.fields[y][x].tryPickUpGold()
+        if gold is not None:
             player.hasGold = True
+            # delete shine
+            self.__removeAroundEffect(x, y, gold.getEffect().__class__)
         # check game end condition
         if y == 0 and x == 0 and player.hasGold == True:
             self.printStatus()

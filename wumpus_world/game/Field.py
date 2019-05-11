@@ -58,7 +58,4 @@ class Field:
                     break
         if gold is not None:
             self.contains.remove(gold)
-            return True
-        return False
-
-
+        return gold
