@@ -1,7 +1,8 @@
-from wumpus_world.game.FieldType import FieldType
-from wumpus_world.game.Scent import Scent
+from .square_ype import SquareType
+from .scent import Scent
 
-class Dragon(FieldType):
+
+class Dragon(SquareType):
     def __init__(self):
         super().__init__(True)
 

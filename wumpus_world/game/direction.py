@@ -1,7 +1,8 @@
 from enum import Enum
 
+
 class Direction(Enum):
-    UP = "w"
+    UP = 'w'
     DOWN = 's'
-    LEFT = "a"
-    RIGHT = "d"
+    LEFT = 'a'
+    RIGHT = 'd'

@@ -1,4 +1,4 @@
-class FieldType:
+class SquareType:
     def __init__(self, danger):
         self.isDangerous = danger
 

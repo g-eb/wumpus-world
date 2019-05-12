@@ -1,9 +1,10 @@
-from wumpus_world.game.FieldType import FieldType
-from wumpus_world.game.Gold import Gold
-from wumpus_world.game.Player import Player
+from .squares.gold import Gold
+from .squares.player import Player
 
-class Field:
+
+class Square:
     MAX_ELEMENTS_NUM = 3
+
     def __init__(self):
         self.contains = []
 
@@ -12,11 +13,12 @@ class Field:
 
     def isOccupied(self):
         for t in self.contains:
-            if t.isDangerous == True:
+            if t.isDangerous:
                 return True
         return False
 
-    # console printing is a little bit broken, because there can be multiple same objects on the field
+    # console printing is a little bit broken, because there can be multiple
+    # same objects at the square
     def getGraphic(self):
         graphic = "|"
         for empty in range(self.MAX_ELEMENTS_NUM - len(self.contains)):

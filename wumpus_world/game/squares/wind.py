@@ -1,6 +1,7 @@
-from wumpus_world.game.FieldType import FieldType
+from .square_type import SquareType
 
-class Wind(FieldType):
+
+class Wind(SquareType):
     def __init__(self):
         super().__init__(False)
 

@@ -1,7 +1,8 @@
-from wumpus_world.game.FieldType import FieldType
-from  wumpus_world.game.Shine import Shine
+from .square_type import SquareType
+from .shine import Shine
 
-class Gold(FieldType):
+
+class Gold(SquareType):
     def __init__(self):
         super().__init__(False)
 
