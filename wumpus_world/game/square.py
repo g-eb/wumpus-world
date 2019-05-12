@@ -3,8 +3,6 @@ from .squares.player import Player
 
 
 class Square:
-    MAX_ELEMENTS_NUM = 3
-
     def __init__(self):
         self.contains = []
 

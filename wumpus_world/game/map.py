@@ -17,7 +17,20 @@ class Map:
         self.width = width
         self.height = height
         self.gameOver = False
-        self.squares = [[Square()] * width] * height
+        self.squares = [
+            [Square() for j in range(width)] for i in range(height)
+        ]
+        self.__randomMap()
+
+    def move(self, direction):
+        if direction == Direction.DOWN.value:
+            self.__tryMove(self.playerPosX, self.playerPosY + 1)
+        elif direction == Direction.UP.value:
+            self.__tryMove(self.playerPosX, self.playerPosY - 1)
+        elif direction == Direction.LEFT.value:
+            self.__tryMove(self.playerPosX - 1, self.playerPosY)
+        elif direction == Direction.RIGHT.value:
+            self.__tryMove(self.playerPosX + 1, self.playerPosY)
 
     def __isXYLegal(self, x, y):
         if x >= 0 and x < self.width and y >= 0 and y < self.height:
@@ -35,7 +48,7 @@ class Map:
         if self.__isXYLegal(x, y + 1):
             self.squares[y + 1][x].addType(effectType)
 
-    def __removeAroundEffect(self, x, y, effectTypeClass):
+    def __removeAroundSquareEffect(self, x, y, effectTypeClass):
         if self.__isXYLegal(x - 1, y):
             self.squares[y][x - 1].removeType(effectTypeClass)
         if self.__isXYLegal(x + 1, y):
@@ -45,7 +58,7 @@ class Map:
         if self.__isXYLegal(x, y + 1):
             self.squares[y + 1][x].removeType(effectTypeClass)
 
-    def addNewTypeToSquare(self, x, y, type):
+    def __addNewTypeToSquare(self, x, y, type):
         if not(self.__isXYLegal(x, y)):
             print("illegal square was given")
             return
@@ -54,41 +67,23 @@ class Map:
         if (effect is not None):
             self.__addAroundSquareEffect(x, y, effect)
 
-    def randomMap(self):
+    def __randomMap(self):
         # put player on (0,0)
         self.squares[0][0].addType(Player())
         # rand dragons
         dragonsNum = randint(
             1,
-            self.height * self.width * self.dragonsOccurrenceFrequency
+            int(self.height * self.width * self.dragonsOccurrenceFrequency)
         )
         self.__addTypeToRandomSquares(Dragon(), dragonsNum)
         # rand holes
         holesNum = randint(
             1,
-            self.height * self.width * self.holesOccurrenceFrequency
+            int(self.height * self.width * self.holesOccurrenceFrequency)
         )
         self.__addTypeToRandomSquares(Hole(), holesNum)
         # rand gold
         self.__addTypeToRandomSquares(Gold(), 1)
-
-    def printStatus(self):
-        for row in range(self.height):
-            for col in range(self.width):
-                print(self.squares[row][col].getGraphic(), end="")
-            print()
-
-    def __action(self):
-        self.printStatus()
-        direction = input()
-        if direction == Direction.DOWN.value:
-            self.__tryMove(self.playerPosX, self.playerPosY + 1)
-        elif direction == Direction.UP.value:
-            self.__tryMove(self.playerPosX, self.playerPosY - 1)
-        elif direction == Direction.LEFT.value:
-            self.__tryMove(self.playerPosX - 1, self.playerPosY)
-        elif direction == Direction.RIGHT.value:
-            self.__tryMove(self.playerPosX + 1, self.playerPosY)
 
     def __tryMove(self, x, y):
         if not(self.__isXYLegal(x, y)):
@@ -98,7 +93,6 @@ class Map:
             Player().__class__
         )
         if self.squares[y][x].hasDangerousElement():     # collison
-            self.printStatus()
             print("Game Over")
             self.gameOver = True
             return
@@ -111,24 +105,22 @@ class Map:
         if gold is not None:
             player.hasGold = True
             # delete shine
-            self.__removeAroundEffect(x, y, gold.getEffect().__class__)
+            self.__removeAroundSquareEffect(x, y, gold.getEffect().__class__)
         # check game end condition
         if y == 0 and x == 0 and player.hasGold:
-            self.printStatus()
             print("You've won!")
             print("Game Over")
             self.gameOver = True
-
-    def startGame(self):
-        while not(self.gameOver):
-            self.__action()
 
     def __addTypeToRandomSquares(self, typeName, num):
         for el in range(num):
             wasSet = False
             while not(wasSet):
+                # FIXME: this can cause an infinite loop, a better solution
+                # would be to shuffle the squares list in a fill_map method and
+                # iterate over the shuffled list creating a squares
                 x = randint(0, self.width - 1)
                 y = randint(0, self.height - 1)
                 if not(self.squares[y][x].isOccupied()):
-                    self.addNewTypeToSquare(x, y, typeName)
+                    self.__addNewTypeToSquare(x, y, typeName)
                     wasSet = True
