@@ -1,61 +1,76 @@
-import tkinter as tk
+from tkinter import Tk
 from .board import Board
 
 
-class Window():
+class Window(Tk):
+    """A class representing the main window of an application."""
+
     default_width = 1280
     default_height = 720
+    min_width = 640
+    min_height = 360
+    window_title = "Wumpus World"
+    background_color = "#21252b"
 
     def __init__(self, map):
-        width, height = self.__calc_window_size(map.width, map.height)
-        self.map = map
-        self.root = tk.Tk()
-        self.board = Board(width, height, map, self.root)
+        """Creates a new main window."""
 
-        self.root.wm_title("Wumpus World")
-        self.root.geometry("{}x{}".format(width, height))
+        super().__init__()
+
+        self.width = 0
+        self.height = 0
+
+        self.title(Window.window_title)
+        self.configure(background=Window.background_color)
+        self.__maximize()
+
+        self.map = map
+        self.board = Board(map, self)
+
         self.__set_key_bindings()
 
     def show(self):
+        """Shows the window."""
+
         self.board.render()
-        self.root.mainloop()
+        self.mainloop()
 
     def close(self, event):
-        self.root.destroy()
+        """Closes the window."""
 
-    def __calc_window_size(self, map_width, map_height):
-        map_width_in_pixels = map_width * Board.square_size
-        map_height_in_pixels = map_height * Board.square_size
-        map_width_fits = map_width_in_pixels <= Window.default_width
-        map_height_fits = map_height_in_pixels <= Window.default_height
+        self.destroy()
 
-        if map_width_fits and map_height_fits:
-            return (map_width_in_pixels, map_height_in_pixels)
+    def __maximize(self):
+        """Sets the window size equal to the screen size."""
 
-        if map_width_fits:
-            return (map_width_in_pixels, Window.default_height)
+        self.width = self.winfo_screenwidth()
+        self.height = self.winfo_screenheight()
 
-        if map_height_fits:
-            return (Window.default_width, map_height_in_pixels)
-
-        return (Window.default_width, Window.default_height)
+        self.geometry("{}x{}".format(self.width, self.height))
 
     def __set_key_bindings(self):
+        """Binds all required key bindings."""
+
         # Window close.
-        self.root.bind("q", self.close)
-        self.root.bind("<Escape>", self.close)
+        self.bind("q", self.close)
+        self.bind("<Escape>", self.close)
 
         # Player movement.
-        self.root.bind("w", self.__move_player)
-        self.root.bind("a", self.__move_player)
-        self.root.bind("s", self.__move_player)
-        self.root.bind("d", self.__move_player)
-        self.root.bind("<Up>", self.__move_player)
-        self.root.bind("<Left>", self.__move_player)
-        self.root.bind("<Down>", self.__move_player)
-        self.root.bind("<Right>", self.__move_player)
+        self.bind("w", self.__move_player)
+        self.bind("a", self.__move_player)
+        self.bind("s", self.__move_player)
+        self.bind("d", self.__move_player)
+        self.bind("<Up>", self.__move_player)
+        self.bind("<Left>", self.__move_player)
+        self.bind("<Down>", self.__move_player)
+        self.bind("<Right>", self.__move_player)
+
+        # TODO: resize the board when the window is resized (<Configure> bind).
 
     def __move_player(self, event):
+        """Moves player when WASD or arrow keys were pressed."""
+
+        # Transform arrow keys into WASD keys.
         keysym = {
             "Up": "w",
             "Left": "a",
@@ -65,3 +80,7 @@ class Window():
 
         self.map.move(keysym)
         self.board.render()
+
+    def __game_over(self, won):
+        # TODO: a method showing info that game is over and the result (v/l).
+        pass
