@@ -3,7 +3,7 @@ from .wind import Wind
 
 
 class Hole(SquareType):
-    color = "#303030"
+    color = "#c9fffa"
 
     def __init__(self):
         super().__init__(True)

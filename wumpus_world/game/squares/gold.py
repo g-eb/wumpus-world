@@ -3,7 +3,7 @@ from .shine import Shine
 
 
 class Gold(SquareType):
-    color = "#eac312"
+    color = "#fcc510"
 
     def __init__(self):
         super().__init__(False)
