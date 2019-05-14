@@ -88,7 +88,7 @@ class Board(Canvas):
         │    ┃                                                                ┃
         └────┺━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
 
-        The board must fit in the window in such a way that no square can be
+        The board must fit in the window in such a way that no square is
         cropped and the board must not have size larger than the map. If it is
         possible to display the full map within the window, it must be fully
         displayed.
@@ -118,7 +118,7 @@ class Board(Canvas):
         nh = (window_height + spacing_without_padding) // square_with_spacing
 
         if map_width <= nw and map_height <= nh:
-            # 2p - s = - (s - 2p)
+            # 2p - s = -(s - 2p)
             bw = map_width * square_with_spacing - spacing_without_padding
             bh = map_height * square_with_spacing - spacing_without_padding
         else:
