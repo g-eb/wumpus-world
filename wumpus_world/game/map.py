@@ -19,7 +19,7 @@ class Map:
         self.height = height
         self.gameOver = False
         self.squares = [
-            [Square() for j in range(width)] for i in range(height)
+            [Square(j, i) for j in range(width)] for i in range(height)
         ]
         self.__randomMap()
 

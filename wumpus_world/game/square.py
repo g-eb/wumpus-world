@@ -3,9 +3,10 @@ from .squares.player import Player
 
 
 class Square:
-    def __init__(self):
-        # TODO: add self.x and self.y.
+    def __init__(self, x, y):
         self.contains = []
+        self.x = x
+        self.y = y
 
     def addType(self, newType):
         self.contains.append(newType)
