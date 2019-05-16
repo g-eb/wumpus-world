@@ -1,4 +1,5 @@
 from random import randint
+from random import shuffle
 from .direction import Direction
 from .square import Square
 from .squares.player import Player
@@ -113,14 +114,17 @@ class Map:
             self.gameOver = True
 
     def __addTypeToRandomSquares(self, typeName, num):
+        # get all not occupied squares
+        emptyFields = []
+        for row in range(self.height):
+            for col in range(self.width):
+                if not(self.squares[row][col].isOccupied()):
+                    emptyFields.append((row, col))
+
+        if num > emptyFields.__len__():
+            print("Not enough space on the board")
+            return
+        # shuffle and take few(num) first empty squares
+        shuffle(emptyFields)
         for el in range(num):
-            wasSet = False
-            while not(wasSet):
-                # FIXME: this can cause an infinite loop, a better solution
-                # would be to shuffle the squares list in a fill_map method and
-                # iterate over the shuffled list creating a squares
-                x = randint(0, self.width - 1)
-                y = randint(0, self.height - 1)
-                if not(self.squares[y][x].isOccupied()):
-                    self.__addNewTypeToSquare(x, y, typeName)
-                    wasSet = True
+            self.__addNewTypeToSquare(emptyFields[el][0], emptyFields[el][1], typeName)
