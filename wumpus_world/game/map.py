@@ -127,4 +127,4 @@ class Map:
         # shuffle and take few(num) first empty squares
         shuffle(emptyFields)
         for el in range(num):
-            self.__addNewTypeToSquare(emptyFields[el][0], emptyFields[el][1], typeName)
+            self.__addNewTypeToSquare(emptyFields[el][1], emptyFields[el][0], typeName)
