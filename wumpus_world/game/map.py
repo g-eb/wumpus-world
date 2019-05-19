@@ -24,6 +24,8 @@ class Map:
         self.__randomMap()
 
     def move(self, direction):
+        if self.gameOver:
+            return
         if direction == Direction.DOWN.value:
             self.__tryMove(self.playerPosX, self.playerPosY + 1)
         elif direction == Direction.UP.value:
