@@ -4,30 +4,38 @@ from tkinter import Canvas, CENTER
 class Board(Canvas):
     """A class representing the board."""
 
-    square_size = 64
-    square_spacing = 2
-    square_element_radius = 8
-    square_background_color = "#2f333d"
-    board_background_color = "#282c34"
-    board_padding = 8
+    _square_size = 64
+    _square_spacing = 2
+    _square_element_radius = 8
+    _square_background_color = "#2f333d"
+    _board_background_color = "#282c34"
+    _board_padding = 8
 
     def __init__(self, map, master=None):
         """Creates a new board component from the tk.Canvas element."""
 
         super().__init__(
             master,
-            background=Board.board_background_color,
+            background=Board._board_background_color,
             # This removes the default border around the canvas.
             highlightthickness=0
         )
 
-        self.map = map
-        self.width = map.width
-        self.height = map.height
+        self._map = map
+        self._width = map.width
+        self._height = map.height
 
-        self.__configure_size()
+        self._configure_size()
         # Center the board horizontally and vertically.
         self.place(relx=0.5, rely=0.5, anchor=CENTER)
+
+    @property
+    def width(self) -> int:
+        return self._width
+
+    @property
+    def height(self) -> int:
+        return self._height
 
     def render(self):
         """Renders all squares and their elements."""
@@ -37,21 +45,21 @@ class Board(Canvas):
 
         for y in range(self.height):
             for x in range(self.width):
-                left_upper_vertex = self.__get_square_point(x, y)
+                left_upper_vertex = self._get_square_point(x, y)
 
                 self.create_rectangle(
                     left_upper_vertex[0],
                     left_upper_vertex[1],
-                    left_upper_vertex[0] + Board.square_size,
-                    left_upper_vertex[1] + Board.square_size,
+                    left_upper_vertex[0] + Board._square_size,
+                    left_upper_vertex[1] + Board._square_size,
                     width=0,
-                    fill=Board.square_background_color
+                    fill=Board._square_background_color
                 )
 
                 # TODO: store (x, y) of a square inside Square class.
-                self.__render_square_elements(x, y, self.map.squares[y][x])
+                self._render_square_elements(x, y, self._map.at(x, y))
 
-    def __configure_size(self):
+    def _configure_size(self):
         """Sets the size of the board based on the window and map sizes.
 
         The board size is found as follows.
@@ -109,11 +117,11 @@ class Board(Canvas):
 
         window_width = self.master.width
         window_height = self.master.height
-        map_width = self.map.width
-        map_height = self.map.height
-        doubled_padding = 2 * Board.board_padding
-        spacing_without_padding = Board.square_spacing - doubled_padding
-        square_with_spacing = Board.square_size + Board.square_spacing
+        map_width = self._map.width
+        map_height = self._map.height
+        doubled_padding = 2 * Board._board_padding
+        spacing_without_padding = Board._square_spacing - doubled_padding
+        square_with_spacing = Board._square_size + Board._square_spacing
         nw = (window_width + spacing_without_padding) // square_with_spacing
         nh = (window_height + spacing_without_padding) // square_with_spacing
 
@@ -127,27 +135,27 @@ class Board(Canvas):
 
         self.configure(width=bw, height=bh)
 
-    def __get_square_point(self, x, y, center=False):
+    def _get_square_point(self, x, y, center=False):
         """Returns coordinates of the left upper vertex of the square.
 
         If center is True, then returns the center of the square.
         """
 
-        square_with_spacing = Board.square_size + Board.square_spacing
+        square_with_spacing = Board._square_size + Board._square_spacing
         left_upper_point = (
-            Board.board_padding + x * square_with_spacing,
-            Board.board_padding + y * square_with_spacing
+            Board._board_padding + x * square_with_spacing,
+            Board._board_padding + y * square_with_spacing
         )
 
         if center:
             return (
-                left_upper_point[0] + Board.square_size / 2,
-                left_upper_point[1] + Board.square_size / 2
+                left_upper_point[0] + Board._square_size / 2,
+                left_upper_point[1] + Board._square_size / 2
             )
 
         return left_upper_point
 
-    def __render_square_elements(self, x, y, square):
+    def _render_square_elements(self, x, y, square):
         """Renders all elements that are at a given square.
 
         If there's only one element, it is drawn at the center of the square.
@@ -160,63 +168,61 @@ class Board(Canvas):
         of their exterior angle.
         """
 
-        if len(square.contains) < 1:
+        if square.size < 1:
             return
 
         # Sort elements by their class name so they are consistently shown.
-        elements = sorted(
-            square.contains, key=lambda el: el.__class__.__name__
-        )
+        elements = square.sorted_elements
         n = len(elements)
-        center = self.__get_square_point(x, y, center=True)
+        center = self._get_square_point(x, y, center=True)
 
         if n == 1:
             # Draw at the center of the square.
-            self.__draw_point(center, elements[0].color)
+            self._draw_point(center, elements[0].color)
 
             return
 
         if n == 2:
             # Draw as a horizontal line through the center of the square.
-            self.__draw_point(
-                (center[0] - 2 * Board.square_element_radius, center[1]),
+            self._draw_point(
+                (center[0] - 2 * Board._square_element_radius, center[1]),
                 elements[0].color
             )
-            self.__draw_point(
-                (center[0] + 2 * Board.square_element_radius, center[1]),
+            self._draw_point(
+                (center[0] + 2 * Board._square_element_radius, center[1]),
                 elements[1].color
             )
 
             return
 
         # Draw as vertices of a regular polygon.
-        start = (center[0], center[1] - 2 * Board.square_element_radius)
+        start = (center[0], center[1] - 2 * Board._square_element_radius)
         alpha = 360 / n
 
         if n % 2 == 0:
             # Rotate an even-sided polygon.
-            start = self.__rotate_point(
+            start = self._rotate_point(
                 start, center, alpha / 2, in_degrees=True)
 
         for index, element in enumerate(elements):
-            point = self.__rotate_point(
+            point = self._rotate_point(
                 start, center, alpha * index, in_degrees=True)
 
-            self.__draw_point(point, element.color)
+            self._draw_point(point, element.color)
 
-    def __draw_point(self, point, color):
+    def _draw_point(self, point, color):
         """Draws a point as a circle with the Board.element_radius radius."""
 
         self.create_oval(
-            round(point[0] - Board.square_element_radius),
-            round(point[1] - Board.square_element_radius),
-            round(point[0] + Board.square_element_radius),
-            round(point[1] + Board.square_element_radius),
+            round(point[0] - Board._square_element_radius),
+            round(point[1] - Board._square_element_radius),
+            round(point[0] + Board._square_element_radius),
+            round(point[1] + Board._square_element_radius),
             width=0,
             fill=color
         )
 
-    def __rotate_point(self, point, circle_center, angle, in_degrees=False):
+    def _rotate_point(self, point, circle_center, angle, in_degrees=False):
         """Rotates a point on a circle by a given angle.
 
         Details about the derivation of a formula can be found at the website
@@ -237,6 +243,6 @@ class Board(Canvas):
             circle_center[1] + diff[0] * sin_alpha + diff[1] * cos_alpha
         )
 
-    def __get_map_left_upper_corner(self, center_at):
+    def _get_map_left_upper_corner(self, center_at):
         # TODO: a method to center the map at the player.
         pass

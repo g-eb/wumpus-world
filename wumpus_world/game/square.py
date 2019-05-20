@@ -1,63 +1,76 @@
-from .squares.gold import Gold
-from .squares.player import Player
+from typing import List, Type
+
+from .squares.square_type import SquareType
 
 
 class Square:
-    def __init__(self, x, y):
-        self.contains = []
-        self.x = x
-        self.y = y
+    def __init__(self, x: int, y: int) -> None:
+        self._elements: List[Type[SquareType]] = []
+        self._x = x
+        self._y = y
+        self._visited = False
 
-    def addType(self, newType):
-        self.contains.append(newType)
+    @property
+    def x(self) -> int:
+        return self._x
 
-    def isOccupied(self):
-        for t in self.contains:
-            if t.isDangerous:
+    @property
+    def y(self) -> int:
+        return self._y
+
+    @property
+    def visited(self) -> bool:
+        return self._visited
+
+    @property
+    def size(self) -> int:
+        return len(self._elements)
+
+    @property
+    def sorted_elements(self) -> List[Type[SquareType]]:
+        return sorted(self._elements, key=lambda element: element.__name__)
+
+    def visit(self) -> None:
+        if not self._visited:
+            self._visited = True
+
+    def is_occupied(self) -> bool:
+        for element in self._elements:
+            if element.is_dangerous:
                 return True
+
         return False
 
-    # console printing is a little bit broken, because there can be multiple
-    # same objects at the square
-    def getGraphic(self):
-        graphic = "|"
-        for empty in range(self.MAX_ELEMENTS_NUM - len(self.contains)):
-            graphic += " "
-        for el in self.contains:
-            graphic += el.getConsoleGraphic()
-        graphic += "|"
-        return graphic
-
-    def removeType(self, typeClass):
-        obj = self.getType(typeClass)
-        if obj is not None:
-            self.contains.remove(obj)
-        return obj
-
-    def getType(self, typeClass):
-        obj = None
-        for el in self.contains:
-            if typeClass == el.__class__:
-                obj = el
-                break
-        return obj
-
-    def hasDangerousElement(self):
-        for el in self.contains:
-            if el.isDangerous:
+    def has(self, typename: Type[SquareType]) -> bool:
+        for element in self._elements:
+            if element == typename:
                 return True
+
         return False
 
-    def tryPickUpGold(self):
-        gold = None
-        for el in self.contains:
-            if el.__class__ == Gold().__class__:
-                for el2 in self.contains:
-                    if el2.__class__ == Player().__class__:
-                        gold = el
-                        break
-                if gold is not None:
-                    break
-        if gold is not None:
-            self.contains.remove(gold)
-        return gold
+    def has_dangerous_element(self) -> bool:
+        for element in self._elements:
+            if element.is_dangerous:
+                return True
+
+        return False
+
+    def add_type(self, typename: Type[SquareType]) -> None:
+        self._elements.append(typename)
+
+    def remove_type(self, typename: Type[SquareType]) -> None:
+        removed = False
+        elements = []
+
+        for element in self._elements:
+            if element == typename:
+                if removed:
+                    # First element with a type typename was deleted.
+                    # The rest elements of that type is copied to the new list.
+                    elements.append(element)
+                else:
+                    removed = True
+            else:
+                elements.append(element)
+
+        self._elements = elements

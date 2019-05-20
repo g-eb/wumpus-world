@@ -1,4 +1,6 @@
 from tkinter import Tk
+
+from ..direction import Direction
 from .board import Board
 
 
@@ -17,38 +19,46 @@ class Window(Tk):
 
         super().__init__()
 
-        self.width = 0
-        self.height = 0
+        self._width = 0
+        self._height = 0
 
         self.title(Window.window_title)
         self.configure(background=Window.background_color)
-        self.__maximize()
+        self._maximize()
 
-        self.map = map
-        self.board = Board(map, self)
+        self._map = map
+        self._board = Board(map, self)
 
-        self.__set_key_bindings()
+        self._set_key_bindings()
+
+    @property
+    def width(self) -> int:
+        return self._width
+
+    @property
+    def height(self) -> int:
+        return self._height
 
     def show(self):
         """Shows the window."""
 
-        self.board.render()
+        self._board.render()
         self.mainloop()
 
-    def close(self, event):
+    def close(self, event=None):
         """Closes the window."""
 
         self.destroy()
 
-    def __maximize(self):
+    def _maximize(self):
         """Sets the window size equal to the screen size."""
 
-        self.width = self.winfo_screenwidth()
-        self.height = self.winfo_screenheight()
+        self._width = self.winfo_screenwidth()
+        self._height = self.winfo_screenheight()
 
         self.geometry("{}x{}".format(self.width, self.height))
 
-    def __set_key_bindings(self):
+    def _set_key_bindings(self):
         """Binds all required key bindings."""
 
         # Window close.
@@ -56,31 +66,43 @@ class Window(Tk):
         self.bind("<Escape>", self.close)
 
         # Player movement.
-        self.bind("w", self.__move_player)
-        self.bind("a", self.__move_player)
-        self.bind("s", self.__move_player)
-        self.bind("d", self.__move_player)
-        self.bind("<Up>", self.__move_player)
-        self.bind("<Left>", self.__move_player)
-        self.bind("<Down>", self.__move_player)
-        self.bind("<Right>", self.__move_player)
+        self.bind("w", self._move_player)
+        self.bind("a", self._move_player)
+        self.bind("s", self._move_player)
+        self.bind("d", self._move_player)
+        self.bind("<Up>", self._move_player)
+        self.bind("<Left>", self._move_player)
+        self.bind("<Down>", self._move_player)
+        self.bind("<Right>", self._move_player)
 
         # TODO: resize the board when the window is resized (<Configure> bind).
 
-    def __move_player(self, event):
+    def _move_player(self, event):
         """Moves player when WASD or arrow keys were pressed."""
 
         # Transform arrow keys into WASD keys.
         keysym = {
-            "Up": "w",
-            "Left": "a",
-            "Down": "s",
-            "Right": "d"
+            "w": Direction.UP,
+            "a": Direction.LEFT,
+            "s": Direction.DOWN,
+            "d": Direction.RIGHT,
+            "Up": Direction.UP,
+            "Left": Direction.LEFT,
+            "Down": Direction.DOWN,
+            "Right": Direction.RIGHT
         }.get(event.keysym, event.keysym)
 
-        self.map.move(keysym)
-        self.board.render()
+        self._map.move(keysym)
 
-    def __game_over(self, won):
-        # TODO: a method showing info that game is over and the result (v/l).
-        pass
+        if self._game_over():
+            self.close()
+        else:
+            self._board.render()
+
+    def _game_over(self):
+        if self._map.game_over:
+            print("Game over, victory: {}".format(self._map.victory))
+
+            return True
+
+        return False

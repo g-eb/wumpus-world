@@ -1,3 +1,5 @@
+from typing import Type
+
 from .square_type import SquareType
 from .shine import Shine
 
@@ -5,8 +7,6 @@ from .shine import Shine
 class Gold(SquareType):
     color = "#fcc510"
 
-    def __init__(self):
-        super().__init__(False)
-
-    def getEffect(self):
-        return Shine()
+    @staticmethod
+    def get_effect() -> Type[Shine]:
+        return Shine
