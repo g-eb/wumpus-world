@@ -6,3 +6,7 @@ class Scent(SquareType):
 
     def __init__(self):
         super().__init__(False)
+
+    def getCause(self):
+        from wumpus_world.game.squares.dragon import Dragon
+        return Dragon()

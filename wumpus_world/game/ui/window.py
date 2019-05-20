@@ -1,4 +1,6 @@
 from tkinter import Tk
+
+from wumpus_world.ai.agent import Agent
 from .board import Board
 
 
@@ -28,6 +30,9 @@ class Window(Tk):
         self.board = Board(map, self)
 
         self.__set_key_bindings()
+
+        self.agent = Agent(self.map)
+        self.agent.makeMove()
 
     def show(self):
         """Shows the window."""
@@ -80,6 +85,7 @@ class Window(Tk):
 
         self.map.move(keysym)
         self.board.render()
+        self.agent.makeMove()
 
     def __game_over(self, won):
         # TODO: a method showing info that game is over and the result (v/l).

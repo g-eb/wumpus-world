@@ -6,3 +6,7 @@ class Wind(SquareType):
 
     def __init__(self):
         super().__init__(False)
+
+    def getCause(self):
+        from wumpus_world.game.squares.hole import Hole
+        return Hole()

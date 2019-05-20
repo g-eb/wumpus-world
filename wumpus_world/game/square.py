@@ -61,3 +61,12 @@ class Square:
         if gold is not None:
             self.contains.remove(gold)
         return gold
+
+    # badly written, change after all
+    def getSquareEffects(self):
+        list = []
+        for el in self.contains:
+            if el.__class__ != Player().__class__:
+                list.append(el)
+        return list
+

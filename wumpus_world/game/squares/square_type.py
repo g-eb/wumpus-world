@@ -6,3 +6,6 @@ class SquareType:
 
     def getEffect(self):
         return None
+
+    def getCause(self):
+        return None

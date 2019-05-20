@@ -130,3 +130,15 @@ class Map:
         shuffle(emptyFields)
         for el in range(num):
             self.__addNewTypeToSquare(emptyFields[el][1], emptyFields[el][0], typeName)
+
+    def getAroundSquares(self, x, y):
+        aroundSquares = []
+        if self.__isXYLegal(x - 1, y):
+            aroundSquares.append(self.squares[y][x - 1])
+        if self.__isXYLegal(x + 1, y):
+            aroundSquares.append(self.squares[y][x + 1])
+        if self.__isXYLegal(x, y - 1):
+            aroundSquares.append(self.squares[y - 1][x])
+        if self.__isXYLegal(x, y + 1):
+            aroundSquares.append(self.squares[y + 1][x])
+        return aroundSquares
