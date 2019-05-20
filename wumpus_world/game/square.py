@@ -13,7 +13,7 @@ class Square:
 
     def isOccupied(self):
         for t in self.contains:
-            if t.isDangerous:
+            if t.isDangerous or t.__class__ == Player().__class__:
                 return True
         return False
 

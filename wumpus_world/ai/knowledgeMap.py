@@ -1,5 +1,6 @@
 from wumpus_world.game.squares.dragon import Dragon
 from wumpus_world.game.squares.hole import Hole
+from wumpus_world.game.squares.gold import Gold
 from wumpus_world.game.squares.no_dragon import NoDragon
 from wumpus_world.game.squares.no_hole import NoHole
 from .knowledgeSquare import KnowledgeSquare
@@ -47,6 +48,8 @@ class KnowledgeMap:
                         if self.containsClass(around, i.getCause().__class__):
                             continue
                         nonSafeAround = self.getNonSafe(around)
+                        if i.getCause().__class__ == Gold().__class__:
+                            nonSafeAround = self.getNonVisited(around)
                         nonImportant = self.getNonImportant(nonSafeAround)
                         if nonImportant.__len__() == 1:
                             knowledgeChanged = True
@@ -92,6 +95,12 @@ class KnowledgeMap:
                 unsafe.append(sq)
         return unsafe
 
+    def getNonVisited(self, squaresList):
+        unvisited = []
+        for sq in squaresList:
+            if not(sq.visited):
+                unvisited.append(sq)
+        return unvisited
     def getNonImportant(self, squaresList):
         unimportant = []
         for sq in squaresList:
