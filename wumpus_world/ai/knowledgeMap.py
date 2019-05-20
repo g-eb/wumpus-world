@@ -32,11 +32,46 @@ class KnowledgeMap:
             for col in range(self.width):
                 self.knowledgeSquares[row][col].assumeSafty()
 
+    def conclude(self):
+        while True:
+            knowledgeChanged = False
+            for row in range(self.height):
+                for col in range(self.width):
+                    if self.knowledgeSquares[row][col].solved:
+                        continue
+                    info = self.knowledgeSquares[row][col].getAdditionalInformations()
+                    for i in info:
+                        around = self.getAroundSquares(col, row)
+                        # if object tak can cause effect is near it can't be conclude that
+                        # this object cause this effect or not
+                        if self.containsClass(around, i.getCause().__class__):
+                            continue
+                        nonSafeAround = self.getNonSafe(around)
+                        nonImportant = self.getNonImportant(nonSafeAround)
+                        if nonImportant.__len__() == 1:
+                            knowledgeChanged = True
+                            nonImportant[0].addKnowledge(i.getCause())
+                            if info.__len__() == 1:
+                                self.knowledgeSquares[row][col].setAsSolved()
+                            # what if field contains solve and unsolved knowledge?
+                            # sure there is a danger
+                            # change facts
+                        # check other possibilities
+                        # partially solved??
+            if not(knowledgeChanged):
+                break
+
     def __isXYLegal(self, x, y):
         if x >= 0 and x < self.width and y >= 0 and y < self.height:
             return True
         else:
             return False
+
+    def containsClass(self, squaresList, searchedClass):
+        for sq in squaresList:
+            if sq.containsClass(searchedClass):
+                return True
+        return False
 
     def getAroundSquares(self, x, y):
         aroundSquares = []
@@ -49,6 +84,20 @@ class KnowledgeMap:
         if self.__isXYLegal(x, y + 1):
             aroundSquares.append(self.knowledgeSquares[y + 1][x])
         return aroundSquares
+
+    def getNonSafe(self, squaresList):
+        unsafe = []
+        for sq in squaresList:
+            if not(sq.isSafe()):
+                unsafe.append(sq)
+        return unsafe
+
+    def getNonImportant(self, squaresList):
+        unimportant = []
+        for sq in squaresList:
+            if not(sq.isImportant()):
+                unimportant.append(sq)
+        return unimportant
 
     def printKnowledge(self):
         for col in range(self.width*(KnowledgeSquare.MAX_ONE_FIELD_ELEMENTS+3) + 2):

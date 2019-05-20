@@ -25,7 +25,7 @@ class KnowledgeSquare:
         if self.solved:
             return
         self.knowledge.append(Safe())
-        self.solved = True
+        #self.solved = True
 
     def assumeSafty(self):
         classes = []
@@ -65,3 +65,22 @@ class KnowledgeSquare:
             if unique:
                 uniqueElements.append(know)
         return uniqueElements
+
+    def getAdditionalInformations(self):
+        info = []
+        for know in self.knowledge:
+            if know.getCause() is not None:
+                info.append(know)
+        return info
+
+    def isImportant(self):
+        for know in self.knowledge:
+            if know.getEffect() is not None:
+                return True
+        return False
+
+    def containsClass(self, searchedClass):
+        for know in self.knowledge:
+            if know.__class__ == searchedClass:
+                return True
+        return False

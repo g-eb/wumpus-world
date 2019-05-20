@@ -24,8 +24,7 @@ class Agent:
             return
         self.knowledgeMap.knowledgeSquares[y][x].setAsSafe()
         self.knowledgeMap.addKnowledge(x, y, self.worldMap.squares[y][x].contains)
-
-
+        self.knowledgeMap.conclude()
 
     def makeMove(self):
         if self.worldMap.gameOver:
