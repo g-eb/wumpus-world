@@ -51,7 +51,7 @@ class KnowledgeMap:
         return aroundSquares
 
     def printKnowledge(self):
-        for col in range(self.width*7 + 2):
+        for col in range(self.width*(KnowledgeSquare.MAX_ONE_FIELD_ELEMENTS+3) + 2):
             print("-", end="")
         print()
         for row in range(self.height):

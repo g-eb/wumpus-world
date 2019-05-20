@@ -4,7 +4,7 @@ from wumpus_world.game.squares.safe import Safe
 
 
 class KnowledgeSquare:
-    MAX_ONE_FIELD_ELEMENTS = 5
+    MAX_ONE_FIELD_ELEMENTS = 6
     def __init__(self, x, y):
         self.x = x
         self.y = y
@@ -42,6 +42,10 @@ class KnowledgeSquare:
 
     def getTextRepresentation(self):
         graphic = "|"
+        if self.visited:
+            graphic += "v"
+        else:
+            graphic += " "
         uniqueElements = self.__getUniqueKnowledge()
         for empty in range(self.MAX_ONE_FIELD_ELEMENTS - len(uniqueElements)):
             graphic += " "
