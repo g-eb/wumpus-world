@@ -13,7 +13,7 @@ class KnowledgeMap:
             [KnowledgeSquare(j, i) for j in range(self.width)] for i in range(self.height)
         ]
 
-    def addKnowledge(self, x, y, newKnowledgeList : [SquareType]):
+    def addKnowledge(self, x, y, newKnowledgeList):
         causes = []
         for know in newKnowledgeList:
             if know.getCause() is not None:
@@ -28,8 +28,8 @@ class KnowledgeMap:
                 sq.addKnowledge(NoHole())
 
         #if field is dragon and hole free than it's safe
-        for row in self.height:
-            for col in self.width:
+        for row in range(self.height):
+            for col in range(self.width):
                 self.knowledgeSquares[row][col].assumeSafty()
 
     def __isXYLegal(self, x, y):
@@ -49,3 +49,13 @@ class KnowledgeMap:
         if self.__isXYLegal(x, y + 1):
             aroundSquares.append(self.knowledgeSquares[y + 1][x])
         return aroundSquares
+
+    def printKnowledge(self):
+        for col in range(self.width*7 + 2):
+            print("-", end="")
+        print()
+        for row in range(self.height):
+            print("|", end="")
+            for col in range(self.width):
+                print(self.knowledgeSquares[row][col].getTextRepresentation(), end="")
+            print("|")

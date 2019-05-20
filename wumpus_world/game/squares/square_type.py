@@ -1,5 +1,6 @@
 class SquareType:
     color = "#000000"
+    text = "?"
 
     def __init__(self, danger):
         self.isDangerous = danger

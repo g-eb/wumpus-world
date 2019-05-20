@@ -4,6 +4,7 @@ from .shine import Shine
 
 class Gold(SquareType):
     color = "#fcc510"
+    text = "$"
 
     def __init__(self):
         super().__init__(False)

@@ -4,6 +4,7 @@ from .wind import Wind
 
 class Hole(SquareType):
     color = "#c9fffa"
+    text = "O"
 
     def __init__(self):
         super().__init__(True)
