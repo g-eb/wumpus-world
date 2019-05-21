@@ -68,7 +68,6 @@ class Agent:
             # go back until safe unvisited is in range
             self.goBack()
 
-
         # add new facts
         self.__addNewFacts()
         self.knowledgeMap.printKnowledge()
@@ -80,13 +79,9 @@ class Agent:
             self.stepNum += 1
         else:
             self.stepNum -= 1
-        if self.stepNum <0 or self.stepNum > self.previousSteps.__len__():
+        if self.stepNum < 0 or self.stepNum > self.previousSteps.__len__():
             return
         prevStep = self.previousSteps[self.stepNum]
-        # dir = self.getDirection(prevStep[0], prevStep[1])
-        # if dir is None:
-        #     prevStep = self.previousSteps.pop()
-        #     dir = self.getDirection(prevStep[0], prevStep[1])
         self.worldMap.move(self.getDirection(prevStep[0], prevStep[1]))
 
     def getDirection(self, newX, newY):

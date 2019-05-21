@@ -4,7 +4,6 @@ from wumpus_world.game.squares.gold import Gold
 from wumpus_world.game.squares.no_dragon import NoDragon
 from wumpus_world.game.squares.no_hole import NoHole
 from .knowledgeSquare import KnowledgeSquare
-from ..game.squares.square_type import SquareType
 
 class KnowledgeMap:
     def __init__(self, width, height):
@@ -56,11 +55,6 @@ class KnowledgeMap:
                             nonImportant[0].addKnowledge(i.getCause())
                             if info.__len__() == 1:
                                 self.knowledgeSquares[row][col].setAsSolved()
-                            # what if field contains solve and unsolved knowledge?
-                            # sure there is a danger
-                            # change facts
-                        # check other possibilities
-                        # partially solved??
             if not(knowledgeChanged):
                 break
 

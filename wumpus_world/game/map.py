@@ -42,24 +42,14 @@ class Map:
             return False
 
     def __addAroundSquareEffect(self, x, y, effectType):
-        if self.__isXYLegal(x - 1, y):
-            self.squares[y][x - 1].addType(effectType)
-        if self.__isXYLegal(x + 1, y):
-            self.squares[y][x + 1].addType(effectType)
-        if self.__isXYLegal(x, y - 1):
-            self.squares[y - 1][x].addType(effectType)
-        if self.__isXYLegal(x, y + 1):
-            self.squares[y + 1][x].addType(effectType)
+        around = self.getAroundSquares(x, y)
+        for sq in around:
+            sq.addType(effectType)
 
     def __removeAroundSquareEffect(self, x, y, effectTypeClass):
-        if self.__isXYLegal(x - 1, y):
-            self.squares[y][x - 1].removeType(effectTypeClass)
-        if self.__isXYLegal(x + 1, y):
-            self.squares[y][x + 1].removeType(effectTypeClass)
-        if self.__isXYLegal(x, y - 1):
-            self.squares[y - 1][x].removeType(effectTypeClass)
-        if self.__isXYLegal(x, y + 1):
-            self.squares[y + 1][x].removeType(effectTypeClass)
+        around = self.getAroundSquares(x, y)
+        for sq in around:
+            sq.removeType(effectTypeClass)
 
     def __addNewTypeToSquare(self, x, y, type):
         if not(self.__isXYLegal(x, y)):
