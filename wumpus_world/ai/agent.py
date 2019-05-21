@@ -73,8 +73,8 @@ class Agent:
         self.knowledgeMap.printKnowledge()
 
     def goBack(self):
-        if self.stepNum == 0:
-            self.reverseSteps = True
+        # if self.stepNum == 0:
+        #    self.reverseSteps = True
         if self.reverseSteps:
             self.stepNum += 1
         else:
