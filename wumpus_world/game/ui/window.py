@@ -32,7 +32,6 @@ class Window(Tk):
         self.__set_key_bindings()
 
         self.agent = Agent(self.map)
-        self.agent.makeMove()
 
     def show(self):
         """Shows the window."""
@@ -60,6 +59,9 @@ class Window(Tk):
         self.bind("q", self.close)
         self.bind("<Escape>", self.close)
 
+        # Agent
+        # self.bind("i", self.aiMove())
+
         # Player movement.
         self.bind("w", self.__move_player)
         self.bind("a", self.__move_player)
@@ -82,10 +84,9 @@ class Window(Tk):
             "Down": "s",
             "Right": "d"
         }.get(event.keysym, event.keysym)
-
-        self.map.move(keysym)
+        self.agent.makeMove() # ai movement
+        # self.map.move(keysym) # player movement
         self.board.render()
-        self.agent.makeMove()
 
     def __game_over(self, won):
         # TODO: a method showing info that game is over and the result (v/l).

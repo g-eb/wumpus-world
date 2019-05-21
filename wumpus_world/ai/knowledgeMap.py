@@ -95,12 +95,28 @@ class KnowledgeMap:
                 unsafe.append(sq)
         return unsafe
 
+    def getSafe(self, squareList):
+        safe = []
+        for sq in squareList:
+            if sq.isSafe():
+                safe.append(sq)
+        return safe
+
+    def getAllSafeSquares(self):
+        safe = []
+        for row in range(self.height):
+            for col in range(self.width):
+                if self.knowledgeSquares[row][col].isSafe():
+                    safe.append(self.knowledgeSquares[row][col])
+        return safe
+
     def getNonVisited(self, squaresList):
         unvisited = []
         for sq in squaresList:
             if not(sq.visited):
                 unvisited.append(sq)
         return unvisited
+
     def getNonImportant(self, squaresList):
         unimportant = []
         for sq in squaresList:
@@ -117,3 +133,8 @@ class KnowledgeMap:
             for col in range(self.width):
                 print(self.knowledgeSquares[row][col].getTextRepresentation(), end="")
             print("|")
+
+    def getSafeAround(self, x, y):
+        around = self.getAroundSquares(x, y)
+        safe = self.getSafe(around)
+        return safe
