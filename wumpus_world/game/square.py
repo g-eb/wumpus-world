@@ -4,6 +4,10 @@ from .square_type import SquareType, Player
 
 
 class Square:
+    @staticmethod
+    def distance(square_1, square_2) -> int:
+        return abs(square_1.x - square_2.x) + abs(square_1.y - square_2.y)
+
     def __init__(self, x: int, y: int) -> None:
         self._elements: List[Type[SquareType]] = []
         self._x = x

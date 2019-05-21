@@ -41,7 +41,11 @@ class Agent(object):
         if self._map.gold_picked:
             return self._map.at(0, 0)
 
-        for square in self._neighbors_of_visited:
+        possible_squares = sorted(
+            self._neighbors_of_visited, key=lambda square: Square.distance(
+                square, self._map.at(*self._map.player_position)))
+
+        for square in possible_squares:
             if self.prove(logic.Gold(square.x, square.y)):
                 print("Found gold at {}!".format(square))
 
@@ -53,11 +57,9 @@ class Agent(object):
 
                 return square
 
-        possible_squares_list = list(self._neighbors_of_visited)
+        shuffle(possible_squares)
 
-        shuffle(possible_squares_list)
-
-        square = possible_squares_list.pop()
+        square = possible_squares.pop()
 
         print('No ok squares, randomly picked {}!'.format(square))
 
