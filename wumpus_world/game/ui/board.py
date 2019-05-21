@@ -7,7 +7,8 @@ class Board(Canvas):
     _square_size = 64
     _square_spacing = 2
     _square_element_radius = 8
-    _square_background_color = "#2f333d"
+    _square_background_color = "#343844"
+    _visited_square_background_color = "#2f333d"
     _board_background_color = "#282c34"
     _board_padding = 8
 
@@ -46,6 +47,10 @@ class Board(Canvas):
         for y in range(self.height):
             for x in range(self.width):
                 left_upper_vertex = self._get_square_point(x, y)
+                square = self._map.at(x, y)
+                color = (Board._visited_square_background_color
+                         if square.visited
+                         else Board._square_background_color)
 
                 self.create_rectangle(
                     left_upper_vertex[0],
@@ -53,11 +58,11 @@ class Board(Canvas):
                     left_upper_vertex[0] + Board._square_size,
                     left_upper_vertex[1] + Board._square_size,
                     width=0,
-                    fill=Board._square_background_color
+                    fill=color
                 )
 
-                # TODO: store (x, y) of a square inside Square class.
-                self._render_square_elements(x, y, self._map.at(x, y))
+                if square.visited:
+                    self._render_square_elements(square)
 
     def _configure_size(self):
         """Sets the size of the board based on the window and map sizes.
@@ -155,7 +160,7 @@ class Board(Canvas):
 
         return left_upper_point
 
-    def _render_square_elements(self, x, y, square):
+    def _render_square_elements(self, square):
         """Renders all elements that are at a given square.
 
         If there's only one element, it is drawn at the center of the square.
@@ -172,9 +177,10 @@ class Board(Canvas):
             return
 
         # Sort elements by their class name so they are consistently shown.
-        elements = square.sorted_elements
+        elements = sorted(
+            square.elements, key=lambda element: element.__name__)
         n = len(elements)
-        center = self._get_square_point(x, y, center=True)
+        center = self._get_square_point(square.x, square.y, center=True)
 
         if n == 1:
             # Draw at the center of the square.

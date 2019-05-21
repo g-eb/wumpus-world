@@ -1,14 +1,9 @@
 from typing import List, Tuple, Type
-from random import randint
-from random import shuffle
+from random import randint, shuffle
 
 from .direction import Direction
 from .square import Square
-from .squares.square_type import SquareType
-from .squares.player import Player
-from .squares.dragon import Dragon
-from .squares.hole import Hole
-from .squares.gold import Gold
+from .square_type import SquareType, Player, Dragon, Hole, Gold
 
 
 class Map:
@@ -49,6 +44,10 @@ class Map:
         return not self._victory
 
     @property
+    def gold_picked(self) -> bool:
+        return self._player_has_gold
+
+    @property
     def player_x(self) -> int:
         return self._player_x
 
@@ -80,36 +79,32 @@ class Map:
 
         return neighbors
 
-    def move(self, direction: Direction) -> None:
-        if self._game_over:
+    def move_at(self, x: int, y: int) -> None:
+        if self.game_over:
             return
 
-        destination_x, destination_y = self._direction_to_point(direction)
+        square = self.at(x, y)
 
-        if self._are_valid_coordinates(destination_x, destination_y):
-            destination = self.at(destination_x, destination_y)
+        self.at(self._player_x, self._player_y).remove_type(Player)
 
-            self.at(self._player_x, self._player_y).remove_type(Player)
+        if square.has_dangerous_element():
+            self._game_over = True
+            self._victory = False
 
-            if destination.has_dangerous_element():
-                self._game_over = True
-                self._victory = False
+            return
 
-                return
+        square.add_type(Player)
+        square.visit()
+        self._player_x, self._player_y = square.x, square.y
 
-            destination.add_type(Player)
-            destination.visit()
-            self._player_x, self._player_y = destination_x, destination_y
+        if square.has(Gold):
+            self._remove_type_from_square(square.x, square.y, Gold)
+            self._player_has_gold = True
 
-            if destination.has(Gold):
-                self._remove_type_from_square(
-                    destination_x, destination_y, Gold)
-                self._player_has_gold = True
-
-            if (self._player_x == 0 and self._player_y == 0
-                    and self._player_has_gold):
-                self._game_over = True
-                self._victory = True
+        if (self._player_x == 0 and self._player_y == 0
+                and self._player_has_gold):
+            self._game_over = True
+            self._victory = True
 
     def _are_valid_coordinates(self, x: int, y: int) -> bool:
         return x >= 0 and x < self._width and y >= 0 and y < self._height
@@ -125,6 +120,7 @@ class Map:
     def _generate_map(self):
         # Put the player at the square (0,0).
         self.at(0, 0).add_type(Player)
+        self.at(0, 0).visit()
 
         # Generate dragons at random squares.
         dragons_number = randint(

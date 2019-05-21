@@ -1,6 +1,6 @@
 from typing import List, Type
 
-from .squares.square_type import SquareType
+from .square_type import SquareType, Player
 
 
 class Square:
@@ -24,45 +24,44 @@ class Square:
 
     @property
     def size(self) -> int:
-        return len(self._elements)
+        return len(self.elements)
 
     @property
-    def sorted_elements(self) -> List[Type[SquareType]]:
-        return sorted(self._elements, key=lambda element: element.__name__)
+    def elements(self) -> List[Type[SquareType]]:
+        return self._elements
+
+    def __repr__(self) -> str:
+        return "Square({}, {})".format(self.x, self.y)
 
     def visit(self) -> None:
         if not self._visited:
             self._visited = True
 
     def is_occupied(self) -> bool:
-        for element in self._elements:
-            if element.is_dangerous:
+        for element in self.elements:
+            if element.is_dangerous or element == Player:
                 return True
 
         return False
 
     def has(self, typename: Type[SquareType]) -> bool:
-        for element in self._elements:
-            if element == typename:
-                return True
-
-        return False
+        return typename in self.elements
 
     def has_dangerous_element(self) -> bool:
-        for element in self._elements:
+        for element in self.elements:
             if element.is_dangerous:
                 return True
 
         return False
 
     def add_type(self, typename: Type[SquareType]) -> None:
-        self._elements.append(typename)
+        self.elements.append(typename)
 
     def remove_type(self, typename: Type[SquareType]) -> None:
         removed = False
         elements = []
 
-        for element in self._elements:
+        for element in self.elements:
             if element == typename:
                 if removed:
                     # First element with a type typename was deleted.
