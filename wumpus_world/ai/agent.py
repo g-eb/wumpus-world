@@ -58,8 +58,11 @@ class Agent:
 
             self.worldMap.move(self.getDirection(newX, newY))
             # add move to previous moves
-            self.previousSteps.append((newX, newY))
             self.stepNum += 1
+            if self.stepNum == self.previousSteps.__len__():
+                self.previousSteps.append((newX, newY))
+            else:
+                self.previousSteps[self.stepNum] = (newX, newY)
             self.reverseSteps = False
         else:
             # go back until safe unvisited is in range
