@@ -12,6 +12,7 @@ class Agent:
         self.stepNum = 0
         self.reverseSteps = False
         self.knowledgeMap.printKnowledge()
+        self.hasGold = False
 
     def __addNewFacts(self):
         x = self.worldMap.playerPosX
@@ -35,6 +36,12 @@ class Agent:
         newX = self.worldMap.playerPosX
         newY = self.worldMap.playerPosY
 
+        # go back if has gold
+        if self.hasGold:
+            self.goBack()
+            self.knowledgeMap.printKnowledge()
+            return
+
         # move
         safeAround = self.knowledgeMap.getSafeAround(x, y)
         saveNotVisited = self.knowledgeMap.getNonVisited(safeAround)
@@ -42,6 +49,13 @@ class Agent:
         if saveNotVisited.__len__() > 0:
             newX = saveNotVisited[0].x
             newY = saveNotVisited[0].y
+            # prefer square with gold
+            for sq in saveNotVisited:
+                if sq.hasGold():
+                    newX = sq.x
+                    newY = sq.y
+                    self.hasGold = True
+
             self.worldMap.move(self.getDirection(newX, newY))
             # add move to previous moves
             self.previousSteps.append((newX, newY))

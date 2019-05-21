@@ -1,3 +1,4 @@
+from wumpus_world.game.squares.gold import Gold
 from wumpus_world.game.squares.no_dragon import NoDragon
 from wumpus_world.game.squares.no_hole import NoHole
 from wumpus_world.game.squares.safe import Safe
@@ -83,4 +84,9 @@ class KnowledgeSquare:
         for know in self.knowledge:
             if know.__class__ == searchedClass:
                 return True
+        return False
+
+    def hasGold(self):
+        if self.containsClass(Gold().__class__):
+            return True
         return False
